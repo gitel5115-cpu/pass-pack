@@ -19,7 +19,23 @@ canvas {
 /* grid-column-start: 2;
     margin-top: 170px;
 } */
+   
 
+#game-container { 
+  position: relative;
+    overflow: hidden;
+  width: 700px;
+  height: 600px;
+  background-color: white;
+  border-radius: 30px;
+  border: 10px white solid;
+  margin: 20px auto; /* ממרכז את המשחק במסך */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+
+#game-container div {
+  box-sizing: border-box;
+}
 
 .grid-container {
   display: grid;

@@ -1,39 +1,46 @@
 class Client extends Component {
     constructor(_name, _clientNum, _cable, width, height, x, y, color) {
-        super(width, height, x, y)
+        super(width, height, x, y, color);
         this.name = _name;
         this.clientNum = _clientNum;
         this.cable = _cable;
         this.clientPackArr = [];
-        this.color=color;
+        this.color = color;
     }
 
-    update() {
-        let ctx = myGameArea.context;
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y - 20, this.width, this.height);
-        if (this.clientPackArr.length > 0) {
-            ctx.fillStyle = "black";
-            let txt = `from: ${this.clientPackArr[0].source} | message:${this.clientPackArr[0].message}`;
-            this.printAt(ctx, txt, this.x + 5, this.y, 20, this.width - 10);
-        }
-    }
+   update() {
+    this.updateVisual();
     
-    crashWith(otherobj) {
-        let myRight = this.x + this.width - 30;
-        let otherLeft = otherobj.x;
-        let crash = true;
-        if (myRight < otherLeft)
-            crash = false;
-        return crash;
+    if (this.clientPackArr.length > 0) {
+        let p = this.clientPackArr[this.clientPackArr.length - 1];
+        // עדכון הטקסט בתוך הדיב של הלקוח
+        this.element.innerText = `From: ${p.source}\nMsg: ${p.message}`;
+        
+        // עיצוב הטקסט שיהיה קריא ובמרכז הריבוע
+        this.element.style.display = "flex";
+        this.element.style.alignItems = "center";
+        this.element.style.justifyContent = "center";
+        this.element.style.textAlign = "center";
+        this.element.style.fontSize = "12px";
+        this.element.style.fontWeight = "bold";
+        this.element.style.padding = "5px";
     }
+}
+    
+crashWith(otherobj) {
+    // אם ה-X של החבילה קטן או שווה ל-X של סוף הלקוח
+    let clientRightSide = this.x + this.width;
+    return otherobj.x <= clientRightSide;
+}
 
     insertsDetailsIntoPackage() {
         let message = document.getElementById(`client${this.clientNum}`).value;
         let addressee = document.getElementById(`inputTo${this.clientNum}`).value;
         let source = `client${this.clientNum}`;
-        let pack = new Package(message, source, addressee, this.clientNum, 210);// The client creates a package.
+        
+        let pack = new Package(message, source, addressee, this.clientNum, 210, "orange");
         pack.yCalc();
+        
         document.getElementById(`client${this.clientNum}`).value = "";
         document.getElementById(`inputTo${this.clientNum}`).value = "";
         this.passesPackageToCable(pack);
@@ -58,23 +65,21 @@ class Client extends Component {
         this.cable.setIsActive(1);
         this.cable.moveRight();
     }
-
-    printAt(context, text, x, y, lineHeight, fitWidth) {
-        fitWidth = fitWidth || 0;
-
-        if (fitWidth <= 0) {
-            context.fillText(text, x, y);
-            return;
-        }
-
-        for (var idx = 1; idx <= text.length; idx++) {
-            var str = text.substr(0, idx);
-            if (context.measureText(str).width > fitWidth) {
-                context.fillText(text.substr(0, idx - 1), x, y);
-                this.printAt(context, text.substr(idx - 1), x, y + lineHeight, lineHeight, fitWidth);
-                return;
+    passesPackageToCable(pack) {
+    // אם הכבל תפוס (isActive == 1)
+    if (this.cable.getIsActive()) {
+        console.log("Cable is busy, client waiting...");
+        let checkCable = setInterval(() => {
+            // ברגע שהכבל מתפנה
+            if (!this.cable.getIsActive()) {
+                clearInterval(checkCable); // מפסיקים את הבדיקה
+                this.send(pack); // שולחים
             }
-        }
-        context.fillText(text, x, y);
+        }, 10);
     }
+    else {
+        // אם הכבל פנוי, שולחים מיד
+        this.send(pack);
+    }
+}
 }
