@@ -4,40 +4,33 @@ class Server extends Component {
         this.cable1 = _cable1;
         this.cable2 = _cable2;
         this.packArr = [];
-
-        this.update = function () {
-            this.updateVisual();
-        }
-
-        this.crashWith = function (otherobj) {
-            return (otherobj.x + otherobj.width) >= this.x;
-        }
+        this.element.innerText = "SERVER";
+        this.element.style.display = "flex";
+        this.element.style.alignItems = "center";
+        this.element.style.justifyContent = "center";
+        this.element.style.fontWeight = "bold";
     }
 
     pushPackIntoArr(pack) {
-        if (pack.addressee >= 1 && pack.addressee <= 4) {
-            this.packArr.push(pack);
+        let sourceCable = (pack.packNum <= 2) ? this.cable1 : this.cable2;
+        sourceCable.unlock();
+        this.packArr.push(pack);
+        this.processQueue();
+    }
+
+    processQueue() {
+        if (this.packArr.length === 0) return;
+
+        let pack = this.packArr[0];
+        let targetCable = (pack.addressee <= 2) ? this.cable1 : this.cable2;
+        if (targetCable.tryLock()) {
+            this.packArr.shift();
+            targetCable.sendLeft(pack);
+            setTimeout(() => this.processQueue(), 500);
         } else {
-            alert("This addressee does not exist, please try again.");
-            pack.isValid = 0;
-            pack.element.remove();
+            setTimeout(() => this.processQueue(), 100);
         }
     }
 
-    checkAddressee(currentPackage) {
-    let addressee = currentPackage.addressee;
-    let targetCable = (addressee < 3) ? this.cable1 : this.cable2;
-
-    // השרת ממתין עד שהכבל המיועד יהיה פנוי
-    let waitForCable = setInterval(() => {
-        if (!targetCable.getIsActive()) {
-            clearInterval(waitForCable);
-            if (currentPackage.isValid) {
-                targetCable.setPackageLeft(currentPackage);
-            }
-        } else {
-            console.log(`Server waiting for cable to client ${addressee}...`);
-        }
-    }, 20);
-}
+    crashWith(obj) { return (obj.x + obj.width) >= this.x; }
 }

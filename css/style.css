@@ -5,21 +5,12 @@ body {
 canvas {
   border-radius: 30px;
   background-color: white;
-  /* border: 1px solid #000000; */
   overflow: hidden;
   border: 10px white solid;
   grid-column-start: 2;
   margin-top: 170px;
   margin-right: 430px;
 }
-
-
-/* canvas{
-    /* border: 10px black solid; */
-/* grid-column-start: 2;
-    margin-top: 170px;
-} */
-   
 
 #game-container { 
   position: relative;
@@ -29,7 +20,7 @@ canvas {
   background-color: white;
   border-radius: 30px;
   border: 10px white solid;
-  margin: 20px auto; /* ממרכז את המשחק במסך */
+  margin: 20px auto; 
   box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
 }
 
@@ -53,9 +44,8 @@ canvas {
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 1;
-  padding-left: 490px;
-  margin-top: 180px;
-
+  padding-left: 490px; 
+  margin-top: 30px;    
 }
 
 input,
@@ -72,8 +62,6 @@ button {
 
 button:hover {
   background-color: rgb(184, 228, 230);
-  /* color: whitesmoke; */
-  /* text-shadow: black 4px; */
 }
 
 button {
