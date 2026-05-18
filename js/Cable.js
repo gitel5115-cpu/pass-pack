@@ -3,9 +3,14 @@ class Cable extends Component {
         super(width, height, x, y, color);
         this.isActive = false;
     }
-    getIsActive() { return this.isActive; }
+
+    getIsActive() {
+        return this.isActive;
+    }
+
     tryLock() {
-        if (this.isActive) return false;
+        if (this.isActive)
+            return false;
         this.isActive = true;
         return true;
     }
@@ -13,16 +18,19 @@ class Cable extends Component {
     unlock() {
         this.isActive = false;
     }
+
     sendRight(pack) {
         let rightInterval = setInterval(() => {
             if (server.crashWith(pack)) {
                 clearInterval(rightInterval);
                 server.pushPackIntoArr(pack);
-            } else {
+            }
+            else {
                 pack.newPos(1);
             }
         }, 10);
     }
+
     sendLeft(pack) {
         pack.packNum = pack.addressee;
         pack.yCalc();

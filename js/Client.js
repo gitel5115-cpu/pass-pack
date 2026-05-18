@@ -25,17 +25,15 @@ class Client extends Component {
     crashWith(otherobj) {
         return otherobj.x <= (this.x + this.width);
     }
+
     insertsDetailsIntoPackage() {
         let msg = document.getElementById(`client${this.clientNum}`).value;
         let to = parseInt(document.getElementById(`inputTo${this.clientNum}`).value);
         if (!msg || isNaN(to)) return;
-
         let pack = new Package(msg, `Client ${this.clientNum}`, to, this.clientNum, this.x + this.width);
         pack.yCalc();
-
         document.getElementById(`client${this.clientNum}`).value = "";
         document.getElementById(`inputTo${this.clientNum}`).value = "";
-
         let wait = setInterval(() => {
             if (this.cable.tryLock()) {
                 clearInterval(wait);
@@ -43,6 +41,4 @@ class Client extends Component {
             }
         }, 50);
     }
-
-    crashWith(obj) { return obj.x <= (this.x + this.width); }
 }
